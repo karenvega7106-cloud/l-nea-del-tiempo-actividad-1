@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Línea del Tiempo: Historia de las Tecnologías de la Información</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* VARIABLES DE COLORES PASTELES */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #ffe5ec 0%, #f0e6ff 50%, #e8f4f8 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --pastel-pink: #ffb7b2;
+      --pastel-purple: #c7ceea;
+      --pastel-blue: #b5ead7;
+      --pastel-yellow: #e2f0cb;
+      --text-color: #4a4a68;
+      --title-color: #5c3c88;
+      --accent-color: #ff8b94;
+      --shadow-color: rgba(140, 130, 175, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-color);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ENCABEZADO Y TÍTULOS LLAMATIVOS */
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2.8rem;
+      color: var(--title-color);
+      text-shadow: 3px 3px 0px #ffffff, 6px 6px 0px rgba(199, 206, 234, 0.6);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: #6b6b8d;
+      font-weight: 600;
+    }
+
+    /* CONTROLES Y MODO EDITOR */
+    .controls-panel {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--pastel-purple);
+      color: #3d3b60;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      background-color: var(--pastel-pink);
+    }
+
+    .btn-edit {
+      background-color: var(--pastel-blue);
+    }
+
+    .edit-only {
+      display: none;
+    }
+
+    /* LÍNEA DEL TIEMPO INTERACTIVA */
+    .timeline-container {
+      position: relative;
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 10px;
+    }
+
+    /* Línea central */
+    .timeline-container::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background: linear-gradient(to bottom, #ffb7b2, #c7ceea, #b5ead7);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+      border-radius: 10px;
+    }
+
+    /* Tarjetas de eventos */
+    .timeline-card {
+      padding: 15px 25px;
+      position: relative;
+      background-color: inherit;
+      width: 50%;
+      box-sizing: border-box;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .timeline-card.left {
+      left: 0;
+    }
+
+    .timeline-card.right {
+      left: 50%;
+    }
+
+    /* Círculo conector */
+    .timeline-card::after {
+      content: '✦';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      right: -15px;
+      background-color: #fff;
+      border: 4px solid var(--pastel-pink);
+      top: 25px;
+      border-radius: 50%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-color);
+      font-size: 12px;
+      box-shadow: 0 0 10px var(--shadow-color);
+    }
+
+    .timeline-card.right::after {
+      left: -15px;
+      border-color: var(--pastel-blue);
+    }
+
+    /* Contenido de cada tarjeta */
+    .card-content {
+      padding: 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(5px);
+      position: relative;
+      border-radius: 20px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 10px 25px var(--shadow-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-content:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .year-tag {
+      display: inline-block;
+      padding: 5px 15px;
+      background-color: var(--accent-color);
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      border-radius: 15px;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.4rem;
+      color: var(--title-color);
+      margin-bottom: 10px;
+    }
+
+    .card-description {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #555577;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .author-tag {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #8a8aab;
+      font-style: italic;
+    }
+
+    /* MODAL MODO EDITOR */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h2 {
+      font-family: 'Fredoka', sans-serif;
+      color: var(--title-color);
+      margin-bottom: 15px;
+    }
+
+    .modal-content input, .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 15px;
+      border: 2px solid #e0e0f0;
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    /* RESPONSIVO */
+    @media screen and (max-width: 768px) {
+      .timeline-container::after {
+        left: 31px;
+      }
+
+      .timeline-card {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+
+      .timeline-card.right {
+        left: 0%;
+      }
+
+      .timeline-card::after, .timeline-card.right::after {
+        left: 15px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Historia de las Tecnologías de la Información</h1>
+    <p class="subtitle">Línea del tiempo interactiva</p>
+    
+    <div class="controls-panel">
+      <button class="btn btn-edit" onclick="toggleEditMode()">🔒 Acceso Administrador (Editar)</button>
+      <button class="btn edit-only" onclick="openAddModal()">➕ Agregar Nuevo Suceso</button>
+    </div>
+  </header>
+
+  <main class="timeline-container" id="timeline">
+    </main>
+
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <h2>Agregar Nuevo Suceso</h2>
+      <label>Año/Fecha:</label>
+      <input type="text" id="newYear" placeholder="Ej. 1995">
+      
+      <label>Título:</label>
+      <input type="text" id="newTitle" placeholder="Ej. Creación de Java">
+      
+      <label>Descripción:</label>
+      <textarea id="newDesc" rows="3" placeholder="Detalles del evento..."></textarea>
+      
+      <label>URL de Imagen (Opcional):</label>
+      <input type="text" id="newImg" placeholder="https://images.unsplash.com/...">
+      
+      <label>Autor del registro:</label>
+      <input type="text" id="newAuthor" placeholder="Tu nombre">
+
+      <div style="display:flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn" style="background:#ddd" onclick="closeModal()">Cancelar</button>
+        <button class="btn" onclick="addNewEvent()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DATOS DE LA LÍNEA DEL TIEMPO
+    const initialEvents = [
+      {
+        year: "3500 a. C.",
+        title: "Escritura en Mesopotamia",
+        desc: "Invención de la escritura en Mesopotamia. Permite almacenar información fuera de la memoria humana por primera vez.",
+        author: "Victor Manuel Chavez Perez",
+        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "3000 a. C.",
+        title: "Tablillas de arcilla",
+        desc: "Consideradas el primer soporte físico masivo para guardar registros y datos en la historia de la TI.",
+        author: "Daryus Onofre",
+        img: "https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "105 d. C.",
+        title: "Invención del Papel",
+        desc: "El alto funcionario Cai Lun, director de los talleres de Luoyang en China, inventa el papel.",
+        author: "Mayra",
+        img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1440",
+        title: "Imprenta Moderna",
+        desc: "Johannes Gutenberg inventa la imprenta con tipos móviles de metal, facilitando la difusión masiva de textos.",
+        author: "Anahi Herrera",
+        img: "https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1671",
+        title: "Máquina Multiplicadora",
+        desc: "Gottfried Leibniz desarrolla una máquina calculadora mecánica capaz de realizar multiplicaciones.",
+        author: "Dana Alejandra Ramirez Garcia",
+        img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1830",
+        title: "El Telégrafo",
+        desc: "Dispositivo de comunicación que transmite mensajes de texto a larga distancia mediante señales eléctricas.",
+        author: "Maria Fernanda",
+        img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1876",
+        title: "El Teléfono",
+        desc: "Invento revolucionario que permitió transmitir la voz humana a distancia de forma continua.",
+        author: "Emely Dayana Alvarado",
+        img: "https://images.unsplash.com/photo-1520923642038-b4259acecbd7?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1939",
+        title: "Televisión a Color",
+        desc: "Guillermo González Camarena, ingeniero e inventor mexicano, crea el sistema tricromático secuencial de campos para transmitir TV a color.",
+        author: "Mayra",
+        img: "https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1943 - 1945",
+        title: "Primera Computadora Electrónica (ENIAC)",
+        desc: "Diseñada para calcular tablas de balística militar, sentó las bases de la computación digital moderna.",
+        author: "Wendy Ruby / Maria Jose Martinez",
+        img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1955",
+        title: "Invención de la Fibra Óptica",
+        desc: "Narinder Singh Kapany inventa la fibra óptica, permitiendo la transmisión masiva de datos a alta velocidad.",
+        author: "Dana Alejandra Ramirez",
+        img: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1962",
+        title: "Satélite Telstar",
+        desc: "Primer satélite de comunicaciones activo, haciendo posibles las transmisiones de televisión transatlánticas.",
+        author: "Angeles Zumaya Barajas",
+        img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1971",
+        title: "Primer Microprocesador (Intel 4004) y Email",
+        desc: "Intel unifica la CPU en un solo chip. En este mismo año Ray Tomlinson envía el primer correo electrónico de la historia.",
+        author: "Anahi Herrera / Dulce Ortiz",
+        img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "1989 - 1991",
+        title: "Creación de la World Wide Web",
+        desc: "Tim Berners-Lee inventa la World Wide Web (WWW), el código HTML y los servidores web en el CERN.",
+        author: "Yamile Pimienta / Angeles Zumaya",
+        img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "2007",
+        title: "Lanzamiento del iPhone",
+        desc: "Apple presenta el primer smartphone con pantalla capacitiva multitáctil, iniciando la era de la computación móvil universal.",
+        author: "Daniel Chavez / Myriam Avila",
+        img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
+      },
+      {
+        year: "2026",
+        title: "Avances de IA en Descubrimientos Matemáticos",
+        desc: "OpenAI presenta la versión interna Astra, logrando resolver y avanzar en 10 problemas matemáticos complejos y teóricos abiertos.",
+        author: "Victor Manuel Chavez Perez",
+        img: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80"
+      }
+    ];
+
+    let isEditMode = false;
+    const ADMIN_PASSWORD = "miPassword123"; // CAMBIA TU CONTRASEÑA AQUÍ
+
+    // Renderizar la línea del tiempo
+    function renderTimeline() {
+      const container = document.getElementById('timeline');
+      container.innerHTML = '';
+
+      const events = JSON.parse(localStorage.getItem('timelineEvents')) || initialEvents;
+
+      events.forEach((item, index) => {
+        const side = index % 2 === 0 ? 'left' : 'right';
+        const card = document.createElement('div');
+        card.className = `timeline-card ${side}`;
+        
+        card.innerHTML = `
+          <div class="card-content">
+            <span class="year-tag">${item.year}</span>
+            <h3 class="card-title">${item.title}</h3>
+            <p class="card-description">${item.desc}</p>
+            ${item.img ? `<img src="${item.img}" class="card-image" alt="${item.title}">` : ''}
+            <div class="author-tag">Registrado por: ${item.author || 'Anónimo'}</div>
+            ${isEditMode ? `<button class="btn" style="background:#ff8b94; color:white; margin-top:10px; padding:4px 12px; font-size:0.8rem;" onclick="deleteEvent(${index})">Eliminar</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // MODO EDITOR PROTEGIDO
+    function toggleEditMode() {
+      if (!isEditMode) {
+        const password = prompt("Ingresa la contraseña para modificar el documento:");
+        if (password === ADMIN_PASSWORD) {
+          isEditMode = true;
+          alert("¡Modo Administrador activado! Ahora puedes editar o agregar nuevos sucesos.");
+          document.querySelectorAll('.edit-only').forEach(el => el.style.display = 'inline-block');
+        } else if (password !== null) {
+          alert("Contraseña incorrecta. Acceso denegado.");
+        }
+      } else {
+        isEditMode = false;
+        document.querySelectorAll('.edit-only').forEach(el => el.style.display = 'none');
+        alert("Has salido del Modo Administrador.");
+      }
+      renderTimeline();
+    }
+
+    // FUNCIONES DEL MODAL
+    function openAddModal() {
+      document.getElementById('addModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('addModal').style.display = 'none';
+    }
+
+    function addNewEvent() {
+      const year = document.getElementById('newYear').value;
+      const title = document.getElementById('newTitle').value;
+      const desc = document.getElementById('newDesc').value;
+      const img = document.getElementById('newImg').value;
+      const author = document.getElementById('newAuthor').value;
+
+      if (!year || !title || !desc) {
+        alert("Por favor, completa al menos el año, el título y la descripción.");
+        return;
+      }
+
+      const events = JSON.parse(localStorage.getItem('timelineEvents')) || initialEvents;
+      events.push({ year, title, desc, img, author });
+      localStorage.setItem('timelineEvents', JSON.stringify(events));
+
+      closeModal();
+      renderTimeline();
+      
+      // Limpiar campos
+      document.getElementById('newYear').value = '';
+      document.getElementById('newTitle').value = '';
+      document.getElementById('newDesc').value = '';
+      document.getElementById('newImg').value = '';
+      document.getElementById('newAuthor').value = '';
+    }
+
+    function deleteEvent(index) {
+      if (confirm("¿Estás seguro de que deseas eliminar este suceso?")) {
+        const events = JSON.parse(localStorage.getItem('timelineEvents')) || initialEvents;
+        events.splice(index, 1);
+        localStorage.setItem('timelineEvents', JSON.stringify(events));
+        renderTimeline();
+      }
+    }
+
+    // Cargar datos al iniciar
+    window.onload = () => {
+      if (!localStorage.getItem('timelineEvents')) {
+        localStorage.setItem('timelineEvents', JSON.stringify(initialEvents));
+      }
+      renderTimeline();
+    };
+  </script>
+</body>
+</html>
